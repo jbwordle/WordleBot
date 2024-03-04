@@ -13,6 +13,8 @@ interface GuessItem {
 
 const Wordle = () => {
     const [isLoading, setIsLoading] = useState(false);
+    const [isFirstLoadFinished, setIsFirstLoadFinished] = useState(false);
+
     const [error, setError] = useState<string | null>(null);
     const [guesses, setGuesses] = useState<GuessItem[]>([
         { guess: Array(5).fill(''), responses: Array(5).fill('absent') },
@@ -88,6 +90,8 @@ const Wordle = () => {
                         newGuesses[0].guess = response.guess.split('');
                         return newGuesses;
                     });
+
+                    setIsFirstLoadFinished(true);
                 }
             } catch (error) {
                 console.error('Error fetching the first word:', error);
@@ -108,7 +112,7 @@ const Wordle = () => {
                 </div>
             )}
 
-            {guesses.map((guessData, index) => (
+            {isFirstLoadFinished && guesses.map((guessData, index) => (
                 <Guess
                     key={index}
                     guessNumber={index + 1}
@@ -122,15 +126,18 @@ const Wordle = () => {
                 {error}
             </div>}
 
-            <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'right' }}>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    disabled={isLoading || activeGuessIndex >= 5}
-                    onClick={handleGuessSubmit}>
-                    {(isLoading ? 'Submitting...' : 'Submit')}
-                </Button>
-            </div>
+            {isFirstLoadFinished &&
+                <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'right' }}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        size="large"
+                        disabled={isLoading || activeGuessIndex >= 5}
+                        onClick={handleGuessSubmit}>
+                         {(isLoading ? 'Submitting...' : 'Submit')}
+                    </Button>
+                </div>
+            }
         </div>
     );
 }
