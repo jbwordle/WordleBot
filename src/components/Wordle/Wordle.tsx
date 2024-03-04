@@ -2,10 +2,9 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useEffect, useState } from 'react';
 import { WordleRequest, WordleRequestItem, WordleResponse, fetchWordleResult } from '../../api/api';
+import { LetterResponse } from '../../types';
 import Guess from './Guess/Guess';
 import './Wordle.css';
-
-type LetterResponse = 'correct' | 'present' | 'absent';
 
 interface GuessItem {
     guess: string[];
@@ -72,6 +71,7 @@ const Wordle = () => {
 
     useEffect(() => {
         const fetchFirstWord = async () => {
+
             setIsLoading(true);
             try {
                 const requestItem: WordleRequestItem = {

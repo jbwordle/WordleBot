@@ -1,0 +1,1 @@
+export type LetterResponse = 'correct' | 'present' | 'absent';

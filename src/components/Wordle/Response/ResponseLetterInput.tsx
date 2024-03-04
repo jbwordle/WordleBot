@@ -1,4 +1,4 @@
-type LetterResponse = 'correct' | 'present' | 'absent';
+import { LetterResponse } from '../../../types';
 
 interface LetterInputProps {
     value: string;

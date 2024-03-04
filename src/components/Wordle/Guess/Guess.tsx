@@ -1,7 +1,6 @@
+import { LetterResponse } from '../../../types';
 import ResponseLetterInput from "../Response/ResponseLetterInput";
 import GuessLetterInput from "./GuessLetterInput";
-
-type LetterResponse = 'correct' | 'present' | 'absent';
 
 interface GuessProps {
     guessNumber: number;
