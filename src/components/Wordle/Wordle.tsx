@@ -1,3 +1,4 @@
+import { Alert } from '@mui/material';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useEffect, useState } from 'react';
@@ -7,26 +8,38 @@ import Guess from './Guess/Guess';
 import './Wordle.css';
 
 interface GuessItem {
-    guess: string[];
-    responses: LetterResponse[];
+    letter: string[];
+    letterResponses: LetterResponse[];
 }
 
 const Wordle = () => {
-    const [isLoading, setIsLoading] = useState(false);
-    const [isFirstLoadFinished, setIsFirstLoadFinished] = useState(false);
+    const absent = 'absent';
+    const guessIsAllGreen = 'ggggg';
+    const blankRequestItem: WordleRequestItem = {
+        word: 'xxxxx',
+        clue: 'xxxxx'
+    };
 
+    const [isLoading, setIsLoading] = useState(false);
+    const [isGameSuccessful, setIsGameSuccessful] = useState(false);
+    const [isGameUnsuccessful, setIsGameUnsuccessful] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [guesses, setGuesses] = useState<GuessItem[]>([
-        { guess: Array(5).fill(''), responses: Array(5).fill('absent') },
-    ]);
     const [activeGuessIndex, setActiveGuessIndex] = useState(0);
 
-    const handleUpdateResponse = (guessIndex: number, letterIndex: number, response: LetterResponse) => {
-        setGuesses(currentGuesses => currentGuesses.map((item, index) => {
+    const wordleHasLoaded = () => {
+        return guessItems[0].letter[0].length > 0;
+    }
+
+    const [guessItems, setGuessItems] = useState<GuessItem[]>([
+        { letter: Array(5).fill(''), letterResponses: Array(5).fill(absent) },
+    ]);
+
+    const handleUpdateLetterResponse = (guessIndex: number, letterIndex: number, letterResponse: LetterResponse) => {
+        setGuessItems(currentGuessItems => currentGuessItems.map((item, index) => {
             if (index === guessIndex) {
-                const updatedResponses = [...item.responses];
-                updatedResponses[letterIndex] = response;
-                return { ...item, responses: updatedResponses };
+                const updatedLetterResponses = [...item.letterResponses];
+                updatedLetterResponses[letterIndex] = letterResponse;
+                return { ...item, letterResponses: updatedLetterResponses };
             }
             return item;
         }));
@@ -36,15 +49,26 @@ const Wordle = () => {
         setIsLoading(true);
         setError(null);
 
-        const currentGuess = guesses[activeGuessIndex];
-        const { guess, responses } = currentGuess;
+        const currentGuessItem = guessItems[activeGuessIndex];
+        const { letter, letterResponses } = currentGuessItem;
 
-        const word = guess.join('');
-        const clue = responses.map(response =>
-            response === 'correct' ? 'g' :
-                response === 'present' ? 'y' :
+        const word = letter.join('');
+        const clue = letterResponses.map(letterResponse =>
+            letterResponse === 'correct' ? 'g' :
+                letterResponse === 'present' ? 'y' :
                     'x'
         ).join('');
+
+        if (clue === guessIsAllGreen) {
+            setIsGameSuccessful(true);
+            setIsLoading(false);
+            return;
+        }
+        else if (guessItems.length === 5) {
+            setIsGameUnsuccessful(true);
+            setIsLoading(false);
+            return;
+        }
 
         const requestItem: WordleRequestItem = {
             word: word,
@@ -54,11 +78,11 @@ const Wordle = () => {
         try {
             const request: WordleRequest = [requestItem];
 
-            const response: WordleResponse = await fetchWordleResult(request);
-            console.log("API Response:", response);
+            const apiResponse: WordleResponse = await fetchWordleResult(request);
+            console.log("API Response:", apiResponse);
 
-            if (response && response.guess) {
-                setGuesses([...guesses, { guess: response.guess.split(''), responses: Array(5).fill('absent') }]);
+            if (apiResponse && apiResponse.guess) {
+                setGuessItems([...guessItems, { letter: apiResponse.guess.split(''), letterResponses: Array(5).fill('absent') }]);
             }
 
             setActiveGuessIndex(activeGuessIndex + 1);
@@ -75,23 +99,16 @@ const Wordle = () => {
         const fetchFirstWord = async () => {
 
             setIsLoading(true);
+
             try {
-                const requestItem: WordleRequestItem = {
-                    word: 'xxxxx',
-                    clue: 'xxxxx'
-                };
-
-                const request: WordleRequest = [requestItem];
-                const response: WordleResponse = await fetchWordleResult(request);
-
-                if (response && response.guess) {
-                    setGuesses(currentGuesses => {
-                        const newGuesses = [...currentGuesses];
-                        newGuesses[0].guess = response.guess.split('');
-                        return newGuesses;
+                const request: WordleRequest = [blankRequestItem];
+                const apiResponse: WordleResponse = await fetchWordleResult(request);
+                if (apiResponse && apiResponse.guess) {
+                    setGuessItems(currentGuessItems => {
+                        const newGuessItems = [...currentGuessItems];
+                        newGuessItems[0].letter = apiResponse.guess.split('');
+                        return newGuessItems;
                     });
-
-                    setIsFirstLoadFinished(true);
                 }
             } catch (error) {
                 console.error('Error fetching the first word:', error);
@@ -112,21 +129,23 @@ const Wordle = () => {
                 </div>
             )}
 
-            {isFirstLoadFinished && guesses.map((guessData, index) => (
+            {wordleHasLoaded() && guessItems.map((guessData, index) => (
                 <Guess
                     key={index}
                     guessNumber={index + 1}
-                    guessValue={guessData.guess}
-                    responses={guessData.responses}
-                    onUpdateResponse={(letterIndex, response) => handleUpdateResponse(index, letterIndex, response)}
+                    guessValue={guessData.letter}
+                    letterResponses={guessData.letterResponses}
+                    onUpdateLetterResponse={(letterIndex, letterResponse) => handleUpdateLetterResponse(index, letterIndex, letterResponse)}
                 />
             ))}
 
-            {error && <div id="error">
-                {error}
-            </div>}
+            {error && <Alert severity="error">{error}</Alert>}
 
-            {isFirstLoadFinished &&
+            {isGameSuccessful && <Alert severity="success">
+                Yay! All Done
+            </Alert>}
+
+            {wordleHasLoaded() && !isGameSuccessful && !isGameUnsuccessful &&
                 <div id="submit-button">
                     <Button
                         variant="contained"
@@ -134,7 +153,7 @@ const Wordle = () => {
                         size="large"
                         disabled={isLoading || activeGuessIndex >= 5}
                         onClick={handleGuessSubmit}>
-                         {(isLoading ? 'Submitting...' : 'Submit')}
+                        {(isLoading ? 'Submitting...' : 'Submit')}
                     </Button>
                 </div>
             }

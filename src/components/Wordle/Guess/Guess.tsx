@@ -1,18 +1,18 @@
 import { LetterResponse } from '../../../types';
-import ResponseLetterInput from "../Response/ResponseLetterInput";
+import LetterResponseInput from "../LetterResponse/LetterResponseInput";
 import GuessLetterInput from "./GuessLetterInput";
 
 interface GuessProps {
     guessNumber: number;
     guessValue: string[];
-    responses: LetterResponse[];
-    onUpdateResponse: (letterIndex: number, response: LetterResponse) => void;
+    letterResponses: LetterResponse[];
+    onUpdateResponse: (letterIndex: number, letterResponse: LetterResponse) => void;
 }
 
 const Guess = ({
     guessNumber,
     guessValue,
-    responses,
+    letterResponses,
     onUpdateResponse
 }: GuessProps) => {
     return (
@@ -30,16 +30,16 @@ const Guess = ({
                     ))}
                 </div>
             </div>
-            <div className="response-inputs">
+            <div className="letter-response-inputs">
                 <label>What response did you get back?</label>
-                <div className="responses">
-                    {responses.map((response, index) => (
-                        <ResponseLetterInput
-                            key={`response-${index}`}
+                <div className="letter-responses">
+                    {letterResponses.map((letterResponse, index) => (
+                        <LetterResponseInput
+                            key={`letterResponse-${index}`}
                             index={index}
                             value={guessValue[index]}
-                            response={response}
-                            onResponseChange={(index, newResponse) => onUpdateResponse(index, newResponse)}
+                            letterResponse={letterResponse}
+                            onLetterResponseChange={(index, newLetterResponse) => onUpdateResponse(index, newLetterResponse)}
                         />
                     ))}
                 </div>
