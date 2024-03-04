@@ -1,3 +1,18 @@
+#wordle-container {
+    position: relative;
+    min-height: 100px;
+}
+
+#circular-spinner {
+    top: 0;
+    left: 0;
+    right: 0;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    z-index: 1000;
+}
+
 .guess-container {
     margin-bottom: 20px;
     padding: 10px;
@@ -11,12 +26,15 @@
     margin-bottom: 15px;
 }
 
+.word-to-guess {
+    pointer-events: none;
+}
+
 .word-to-guess,
 .response-inputs {
     display: flex;
     align-items: center;
     margin-bottom: 15px;
-    pointer-events: none;
 }
 
 .word-to-guess label,
@@ -56,7 +74,13 @@
     background-color: #fff;
 }
 
-.error {
+#error {
     color: red;
     margin-top: 10px;
+}
+
+#submit-button {
+    margin-top: 20px;
+    display: flex;
+    justify-content: right;
 }

@@ -105,9 +105,9 @@ const Wordle = () => {
     }, []);
 
     return (
-        <div id="wordle-container" style={{ position: 'relative', minHeight: '100px' }}>
+        <div id="wordle-container">
             {isLoading && (
-                <div style={{ top: 0, left: 0, right: 0, marginBottom: '20px', display: 'flex', justifyContent: 'center', zIndex: 1000 }}>
+                <div id="circular-spinner">
                     <CircularProgress />
                 </div>
             )}
@@ -122,12 +122,12 @@ const Wordle = () => {
                 />
             ))}
 
-            {error && <div className="error">
+            {error && <div id="error">
                 {error}
             </div>}
 
             {isFirstLoadFinished &&
-                <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'right' }}>
+                <div id="submit-button">
                     <Button
                         variant="contained"
                         color="primary"
