@@ -1,6 +1,7 @@
 #wordle-container {
     position: relative;
     min-height: 100px;
+    padding: 20px 0;
 }
 
 #circular-spinner {
@@ -79,6 +80,12 @@
 }
 
 #submit-button {
+    margin-top: 20px;
+    display: flex;
+    justify-content: right;
+}
+
+#reset-button {
     margin-top: 20px;
     display: flex;
     justify-content: right;

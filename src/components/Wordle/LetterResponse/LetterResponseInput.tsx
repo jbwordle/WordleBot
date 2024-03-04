@@ -7,6 +7,10 @@ interface LetterResponseInputProps {
     onLetterResponseChange: (index: number, newLetterResponse: LetterResponse) => void;
 }
 
+const absent = 'absent'; //letter is completely absent
+const present = 'present'; //correct letter and incorrect position
+const correct = 'correct'; //correct letter and correct position
+
 const LetterResponseInput = ({
     value,
     letterResponse,
@@ -15,8 +19,8 @@ const LetterResponseInput = ({
 }: LetterResponseInputProps) => {
     const handleLetterResponseClick = () => {
         const newLetterResponse: LetterResponse =
-        letterResponse === 'correct' ? 'present' :
-        letterResponse === 'present' ? 'absent' : 'correct';
+            letterResponse === correct ? present :
+                letterResponse === present ? absent : correct;
         onLetterResponseChange(index, newLetterResponse);
     };
 

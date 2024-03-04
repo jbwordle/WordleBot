@@ -1,14 +1,20 @@
 import { Container } from "@mui/material";
-import Header from "./components/Header";
 import Layout from "./components/Layout";
+import Header from "./components/Header";
 import Wordle from "./components/Wordle/Wordle";
+import { useState } from "react";
 
 function App() {
+    const [key, setKey] = useState(0);
+
+    const resetWordle = () =>
+    setKey(prevKey => prevKey + 1);
+
     return (
         <Layout>
             <Container maxWidth="sm">
                 <Header />
-                <Wordle  />
+                <Wordle key={key} onResetWordle={resetWordle} />
             </Container>
         </Layout>
     );

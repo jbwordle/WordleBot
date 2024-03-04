@@ -6,14 +6,14 @@ interface GuessProps {
     guessNumber: number;
     guessValue: string[];
     letterResponses: LetterResponse[];
-    onUpdateResponse: (letterIndex: number, letterResponse: LetterResponse) => void;
+    onUpdateLetterResponse: (letterIndex: number, letterResponse: LetterResponse) => void;
 }
 
 const Guess = ({
     guessNumber,
     guessValue,
     letterResponses,
-    onUpdateResponse
+    onUpdateLetterResponse
 }: GuessProps) => {
     return (
         <div className="guess-container">
@@ -39,7 +39,7 @@ const Guess = ({
                             index={index}
                             value={guessValue[index]}
                             letterResponse={letterResponse}
-                            onLetterResponseChange={(index, newLetterResponse) => onUpdateResponse(index, newLetterResponse)}
+                            onLetterResponseChange={(index, newLetterResponse) => onUpdateLetterResponse(index, newLetterResponse)}
                         />
                     ))}
                 </div>
