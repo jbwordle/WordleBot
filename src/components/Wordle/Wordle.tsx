@@ -1,6 +1,6 @@
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { WordleRequest, WordleRequestItem, WordleResponse, fetchWordleResult } from '../../api/api';
 import { LetterResponse } from '../../types';
 import Guess from './Guess/Guess';
@@ -88,7 +88,7 @@ const Wordle = ({ onResetWordle }: WordleProps) => {
 
                 if (apiResponse && apiResponse.guess && typeof apiResponse.guess === 'string') {
                     if (typeof apiResponse.guess === 'string') {
-                        setGuessItems([...guessItems, { letter: apiResponse.guess.split(''), letterResponses: Array(5).fill('absent') }]);
+                        setGuessItems([...guessItems, { letter: apiResponse.guess.split(''), letterResponses: Array(5).fill(absent) }]);
                         setActiveGuessIndex(activeGuessIndex + 1);
                     }
                 }
@@ -97,8 +97,12 @@ const Wordle = ({ onResetWordle }: WordleProps) => {
                 }
             }
             catch (error) {
-                setErrorMsg('errorMsg fetching Wordle result.');
-                setDetailedErrorMsg('Error: ' + error);
+                setErrorMsg('Error fetching Wordle result.');
+                if (error instanceof Error) {
+                    setDetailedErrorMsg('Error: ' + error.message);
+                } else {
+                    setDetailedErrorMsg('Error: ' + error);
+                }
             } finally {
                 setIsLoading(false);
             }
@@ -140,17 +144,19 @@ const Wordle = ({ onResetWordle }: WordleProps) => {
         } catch (error) {
             setIsFailedOnFirstLoad(true);
             setErrorMsg('Failed to load the first word. Please try again.');
-            setDetailedErrorMsg('Error: ' + error);
+            if (error instanceof Error) {
+                setDetailedErrorMsg('Error: ' + error.message);
+            } else {
+                setDetailedErrorMsg('Error: ' + error);
+            }
         } finally {
             setIsLoading(false);
         }
     };
 
-    const handleWordleInitRef = useRef(handleWordleInit);
-
     useEffect(() => {
         // first load
-        handleWordleInitRef.current();
+        handleWordleInit();
     }, []);
 
     return (
