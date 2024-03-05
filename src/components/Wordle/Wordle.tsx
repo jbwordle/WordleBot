@@ -1,4 +1,3 @@
-import { Alert } from '@mui/material';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useEffect, useRef, useState } from 'react';
@@ -87,9 +86,14 @@ const Wordle = ({ onResetWordle }: WordleProps) => {
                 const request: WordleRequest = [requestItem];
                 const apiResponse: WordleResponse = await fetchWordleResult(request);
 
-                if (apiResponse && apiResponse.guess) {
-                    setGuessItems([...guessItems, { letter: apiResponse.guess.split(''), letterResponses: Array(5).fill('absent') }]);
-                    setActiveGuessIndex(activeGuessIndex + 1);
+                if (apiResponse && apiResponse.guess && typeof apiResponse.guess === 'string') {
+                    if (typeof apiResponse.guess === 'string') {
+                        setGuessItems([...guessItems, { letter: apiResponse.guess.split(''), letterResponses: Array(5).fill('absent') }]);
+                        setActiveGuessIndex(activeGuessIndex + 1);
+                    }
+                }
+                else {
+                    throw new TypeError();
                 }
             }
             catch (error) {
@@ -121,12 +125,15 @@ const Wordle = ({ onResetWordle }: WordleProps) => {
             const request: WordleRequest = [blankRequestItem];
             const apiResponse: WordleResponse = await fetchWordleResult(request);
 
-            if (apiResponse && apiResponse.guess) {
+            if (apiResponse && apiResponse.guess && typeof apiResponse.guess === 'string') {
                 setGuessItems(currentGuessItems => {
                     const newGuessItems = [...currentGuessItems];
                     newGuessItems[0].letter = apiResponse.guess.split('');
                     return newGuessItems;
                 });
+            }
+            else {
+                throw new TypeError();
             }
 
             setIsFirstLoadFinished(true);
@@ -165,7 +172,7 @@ const Wordle = ({ onResetWordle }: WordleProps) => {
             ))}
 
             <StatusInfoPane isGameSuccessful={isGameSuccessful} isGameUnsuccessful={isGameUnsuccessful} errorMsg={errorMsg} detailedErrorMsg={detailedErrorMsg} />
-          
+
             {isFirstLoadFinished && !isGameSuccessful && !isGameUnsuccessful && !isFailedOnFirstLoad &&
                 <div id="submit-button">
                     <Button
