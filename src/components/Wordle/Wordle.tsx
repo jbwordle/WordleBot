@@ -53,6 +53,7 @@ const Wordle = ({ onResetWordle }: WordleProps) => {
 
     const handleGuessSubmit = async () => {
         setErrorMsg(null);
+        setDetailedErrorMsg(null);
         setIsLoading(true);
 
         const currentGuessItem = guessItems[activeGuessIndex];
