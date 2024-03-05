@@ -6,6 +6,7 @@ import { WordleRequest, WordleRequestItem, WordleResponse, fetchWordleResult } f
 import { LetterResponse } from '../../types';
 import Guess from './Guess/Guess';
 import './Wordle.css';
+import StatusInfoPane from './StatusInfoPane';
 
 interface WordleProps {
     onResetWordle: () => void;
@@ -29,7 +30,8 @@ const Wordle = ({ onResetWordle }: WordleProps) => {
     const [isGameSuccessful, setIsGameSuccessful] = useState(false);
     const [isGameUnsuccessful, setIsGameUnsuccessful] = useState(false);
     const [isFailedOnFirstLoad, setIsFailedOnFirstLoad] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [errorMsg, setErrorMsg] = useState<string | null>(null);
+    const [detailedErrorMsg, setDetailedErrorMsg] = useState<string | null>(null);
     const [activeGuessIndex, setActiveGuessIndex] = useState(0);
 
     const [guessItems, setGuessItems] = useState<GuessItem[]>([
@@ -50,7 +52,7 @@ const Wordle = ({ onResetWordle }: WordleProps) => {
     };
 
     const handleGuessSubmit = async () => {
-        setError(null);
+        setErrorMsg(null);
         setIsLoading(true);
 
         const currentGuessItem = guessItems[activeGuessIndex];
@@ -90,7 +92,8 @@ const Wordle = ({ onResetWordle }: WordleProps) => {
                 }
             }
             catch (error) {
-                setError('Error fetching Wordle result: ' + error);
+                setErrorMsg('errorMsg fetching Wordle result.');
+                setDetailedErrorMsg('Error: ' + error);
             } finally {
                 setIsLoading(false);
             }
@@ -104,7 +107,8 @@ const Wordle = ({ onResetWordle }: WordleProps) => {
 
     const handleWordleInit = async () => {
         setIsLoading(true);
-        setError(null);
+        setErrorMsg(null);
+        setDetailedErrorMsg(null);
         setIsFirstLoadFinished(false);
         setIsFailedOnFirstLoad(false);
         setIsGameSuccessful(false);
@@ -127,7 +131,8 @@ const Wordle = ({ onResetWordle }: WordleProps) => {
             setIsFirstLoadFinished(true);
         } catch (error) {
             setIsFailedOnFirstLoad(true);
-            setError('Failed to load the first word. Please try again. Error Message: ' + error);
+            setErrorMsg('Failed to load the first word. Please try again.');
+            setDetailedErrorMsg('Error: ' + error);
         } finally {
             setIsLoading(false);
         }
@@ -158,16 +163,8 @@ const Wordle = ({ onResetWordle }: WordleProps) => {
                 />
             ))}
 
-            {error && <Alert severity="error">{error}</Alert>}
-
-            {isGameSuccessful && <Alert severity="success">
-                Yay! All Done
-            </Alert>}
-
-            {isGameUnsuccessful && <Alert severity="info">
-                Game Over! Click below to play again.
-            </Alert>}
-
+            <StatusInfoPane isGameSuccessful={isGameSuccessful} isGameUnsuccessful={isGameUnsuccessful} errorMsg={errorMsg} detailedErrorMsg={detailedErrorMsg} />
+          
             {isFirstLoadFinished && !isGameSuccessful && !isGameUnsuccessful && !isFailedOnFirstLoad &&
                 <div id="submit-button">
                     <Button
