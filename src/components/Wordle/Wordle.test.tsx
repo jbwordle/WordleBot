@@ -11,7 +11,7 @@ describe('Wordle Component', () => {
     });
 
     await act(async () => {
-      render(<Wordle onResetWordle={() => {}} />);
+      render(<Wordle />);
     });
 
     await waitFor(() => expect(fetchWordleResult).toHaveBeenCalledTimes(1));

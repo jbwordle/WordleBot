@@ -7,16 +7,12 @@ import Guess from './Guess/Guess';
 import './Wordle.css';
 import StatusInfoPane from './StatusInfoPane';
 
-interface WordleProps {
-    onResetWordle: () => void;
-}
-
 interface GuessItem {
     letter: string[];
     letterResponses: LetterResponse[];
 }
 
-const Wordle = ({ onResetWordle }: WordleProps) => {
+const Wordle = () => {
     const absent = 'absent';
     const guessIsAllGreen = 'ggggg';
     const blankRequestItem: WordleRequestItem = {
@@ -109,11 +105,7 @@ const Wordle = ({ onResetWordle }: WordleProps) => {
         };
     }
 
-    const handleWordleReset = () => {
-        //restart method replacing entire Wordle component
-        onResetWordle();
-    }
-
+    //init or reset
     const handleWordleInit = async () => {
         setIsLoading(true);
         setErrorMsg(null);
@@ -157,6 +149,7 @@ const Wordle = ({ onResetWordle }: WordleProps) => {
     useEffect(() => {
         // first load
         handleWordleInit();
+        // eslint-disable-next-line
     }, []);
 
     return (
@@ -198,7 +191,7 @@ const Wordle = ({ onResetWordle }: WordleProps) => {
                         variant="contained"
                         color="primary"
                         size="large"
-                        onClick={handleWordleReset}>
+                        onClick={handleWordleInit}>
                         {isFailedOnFirstLoad ? 'Try again' : 'Play again'}
                     </Button>
                 </div>
