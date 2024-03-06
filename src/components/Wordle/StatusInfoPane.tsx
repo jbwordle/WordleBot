@@ -4,14 +4,12 @@ interface StatusInfoPaneProps {
     isGameSuccessful: boolean;
     isGameUnsuccessful: boolean;
     errorMsg: string | null;
-    detailedErrorMsg: string | null;
 }
 
 const StatusInfoPane = ({
     isGameSuccessful,
     isGameUnsuccessful,
     errorMsg,
-    detailedErrorMsg
 }: StatusInfoPaneProps) => {
 
     return (
@@ -20,16 +18,10 @@ const StatusInfoPane = ({
                 <Alert severity="error">
                     <div>
                         {errorMsg}
-                        {detailedErrorMsg && (
-                            <>
-                                <br />
-                                {detailedErrorMsg}
-                            </>
-                        )}
                     </div>
                 </Alert>
             )}
-            
+
             {isGameSuccessful && <Alert severity="success">
                 Yay! All Done
             </Alert>}

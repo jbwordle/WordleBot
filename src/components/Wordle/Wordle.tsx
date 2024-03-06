@@ -26,7 +26,6 @@ const Wordle = () => {
     const [isGameUnsuccessful, setIsGameUnsuccessful] = useState(false);
     const [isFailedOnFirstLoad, setIsFailedOnFirstLoad] = useState(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
-    const [detailedErrorMsg, setDetailedErrorMsg] = useState<string | null>(null);
     const [activeGuessIndex, setActiveGuessIndex] = useState(0);
 
     const [guessItems, setGuessItems] = useState<GuessItem[]>([
@@ -48,7 +47,6 @@ const Wordle = () => {
 
     const handleGuessSubmit = async () => {
         setErrorMsg(null);
-        setDetailedErrorMsg(null);
         setIsLoading(true);
 
         const currentGuessItem = guessItems[activeGuessIndex];
@@ -94,11 +92,6 @@ const Wordle = () => {
             }
             catch (error) {
                 setErrorMsg('Error fetching Wordle result.');
-                if (error instanceof Error) {
-                    setDetailedErrorMsg('Error: ' + error.message);
-                } else {
-                    setDetailedErrorMsg('Error: ' + error);
-                }
             } finally {
                 setIsLoading(false);
             }
@@ -109,7 +102,6 @@ const Wordle = () => {
     const handleWordleInit = async () => {
         setIsLoading(true);
         setErrorMsg(null);
-        setDetailedErrorMsg(null);
         setIsFirstLoadFinished(false);
         setIsFailedOnFirstLoad(false);
         setIsGameSuccessful(false);
@@ -136,11 +128,6 @@ const Wordle = () => {
         } catch (error) {
             setIsFailedOnFirstLoad(true);
             setErrorMsg('Failed to load the first word. Please try again.');
-            if (error instanceof Error) {
-                setDetailedErrorMsg('Error: ' + error.message);
-            } else {
-                setDetailedErrorMsg('Error: ' + error);
-            }
         } finally {
             setIsLoading(false);
         }
@@ -170,7 +157,7 @@ const Wordle = () => {
                 />
             ))}
 
-            <StatusInfoPane isGameSuccessful={isGameSuccessful} isGameUnsuccessful={isGameUnsuccessful} errorMsg={errorMsg} detailedErrorMsg={detailedErrorMsg} />
+            <StatusInfoPane isGameSuccessful={isGameSuccessful} isGameUnsuccessful={isGameUnsuccessful} errorMsg={errorMsg} />
 
             {isFirstLoadFinished && !isGameSuccessful && !isGameUnsuccessful && !isFailedOnFirstLoad &&
                 <div id="submit-button">
